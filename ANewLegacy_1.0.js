@@ -186,6 +186,39 @@ func:function()
 		}
 		return mult;
 	}
+	{
+        var me=G.getDict(what);
+        var type=me.type;
+        if (type=='tech' && G.techsOwnedNames.includes(what)) return false;
+        else if (type=='trait' && G.traitsOwnedNames.includes(what)) return false;
+        else if (type=='unit' && G.unitsOwnedNames.includes(what)) return false;
+        return true;
+    }
+
+	G.fixTooltipIcons=function()
+	{
+		G.parse=function(what)
+		{
+			var str='<div class="par">'+((what
+			.replaceAll(']s',',*PLURAL*]'))
+			.replace(/\[(.*?)\]/gi,G.parseFunc))
+			.replaceAll('http(s?)://','http$1:#SLASH#SLASH#')
+			.replaceAll('//','</div><div class="par">')
+			.replaceAll('#SLASH#SLASH#','//')
+			.replaceAll('@','</div><div class="par bulleted">')
+			.replaceAll('<>','</div><div class="divider"></div><div class="par">')+'</div>';
+			return str;
+		}
+	}
+	G.initializeFixIcons=function()
+	{
+		if (G.parse("http://").search("http://") == -1)
+		{
+			G.fixTooltipIcons();
+			setTimeout(G.initializeFixIcons,500);	// check again to make sure this version of the function stays applied during page load
+		}
+	}
+	G.initializeFixIcons();
 	
 	/*=====================================================================================
 	RESOURCES
